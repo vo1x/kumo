@@ -1,46 +1,14 @@
+import NextAuth from "next-auth";
+import Google from "next-auth/providers/google";
 import { connectMongoDB } from "@/lib/mongodb";
+import { refreshAccessToken } from "@/lib/drive";
 import User from "@/models/user";
-import GoogleProvider from "next-auth/providers/google";
-import NextAuth, { NextAuthOptions } from "next-auth";
 
-async function refreshAccessToken(refreshToken: string) {
-  try {
-
-    const response = await fetch("https://oauth2.googleapis.com/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        client_id: process.env.GOOGLE_CLIENT_ID!,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-        refresh_token: refreshToken,
-        grant_type: "refresh_token",
-      }),
-    });
-
-    const tokens = await response.json();
-
-    if (!response.ok) {
-      console.error("❌ Failed to refresh token:", tokens);
-      throw tokens;
-    }
-
-    const expiresAt = Date.now() + tokens.expires_in * 1000;
-
-
-    return {
-      accessToken: tokens.access_token,
-      expiresAt,
-    };
-  } catch (error) {
-    console.error("🚨 Error refreshing access token:", error);
-    return null;
-  }
-}
-export const authOptions: NextAuthOptions = {
+export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    Google({
+      clientId: process.env.AUTH_GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET!,
       authorization: {
         url: "https://accounts.google.com/o/oauth2/auth",
         params: {
@@ -111,5 +79,5 @@ export const authOptions: NextAuthOptions = {
     },
   },
   session: { strategy: "jwt" },
-  secret: process.env.NEXTAUTH_SECRET,
-};
+  secret: process.env.AUTH_SECRET,
+});

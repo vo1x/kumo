@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 export const connectMongoDB = async () => {
+  if (mongoose.connection.readyState >= 1) {
+    // If the connection is already established, return
+    return;
+  }
+
   if (!process.env.MONGODB_URI) {
     console.error("Missing mongo db uri");
     return;

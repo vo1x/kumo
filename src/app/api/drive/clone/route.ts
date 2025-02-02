@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+// import { getServerSession } from "next-auth";
 import { cloneFolder } from "@/lib/drive";
-import { authOptions } from "@/lib/authOptions";
+// import { authOptions } from "@/lib/authOptions";
+import { auth } from "@/auth";
 
 export async function GET(request: NextRequest) {
   const mimeId: string | null = request.nextUrl.searchParams.get("mimeId");
   const destId: string | null = request.nextUrl.searchParams.get("destId");
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   console.log(mimeId);
   console.log(destId);

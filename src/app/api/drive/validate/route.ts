@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOptions";
+import { auth } from "@/auth";
 
 export async function GET(request: NextRequest) {
   const destId: string | null = request.nextUrl.searchParams.get("destId");
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
