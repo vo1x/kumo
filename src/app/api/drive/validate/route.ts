@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const url = `https://www.googleapis.com/drive/v3/files/${destId}?fields=id,name,mimeType,permissions`;
+  const url = `https://www.googleapis.com/drive/v3/files/${destId}?fields=id,name,mimeType,permissions&includeItemsFromAllDrives=true&supportsAllDrives=true`;
 
   const res = await fetch(url, {
     method: "GET",
